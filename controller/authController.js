@@ -186,9 +186,9 @@ const authController = async (req, res) => {
           userName: data.name,
           phone: data.phone,
           DOB: data.DOB,
-          status: 200,
         },
         loginToken: token,
+        status: 200,
       });
     }
 
@@ -230,9 +230,9 @@ const authController = async (req, res) => {
           userName: user.name,
           phone: user.phone,
           DOB: user.DOB,
-          status:200
         },
         loginToken: token,
+        status: 200,
       });
     }
   } catch (error) {
