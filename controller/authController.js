@@ -130,16 +130,22 @@ const authController = async (req, res) => {
 
     if (action === "signup") {
       // ---- SIGNUP LOGIC ----
-      if (!email) return res.status(400).json({ message: "Email required" });
+      if (!email) return res.status(400).json({ message: "Email required", status: 400 });
       if (!password)
-        return res.status(400).json({ message: "Password required" });
+        return res
+          .status(400)
+          .json({ message: "Password required", status: 400 });
       if (!user_type)
-        return res.status(400).json({ message: "User type required" });
-      if (!phone) return res.status(400).json({ message: "Phone required" });
+        return res
+          .status(400)
+          .json({ message: "User type required", status: 400 });
+      if (!phone) return res.status(400).json({ message: "Phone required", status: 400 });
 
       const existedUser = await Signup.findOne({ email });
       if (existedUser) {
-        return res.status(400).json({ message: "Email already exists" });
+        return res
+          .status(400)
+          .json({ message: "Email already exists", status: 400 });
       }
 
       const lastUser = await Signup.findOne({}).sort({ userId: -1 }).lean();
@@ -180,6 +186,7 @@ const authController = async (req, res) => {
           userName: data.name,
           phone: data.phone,
           DOB: data.DOB,
+          status: 200,
         },
         loginToken: token,
       });
@@ -189,14 +196,20 @@ const authController = async (req, res) => {
       // ---- LOGIN LOGIC ----
       const user = await Signup.findOne({ email });
       if (!user)
-        return res.status(404).json({ message: "User does not exist" });
+        return res
+          .status(404)
+          .json({ message: "User does not exist", status: 401 });
 
       if (password !== user.password) {
-        return res.status(401).json({ message: "Password is incorrect" });
+        return res
+          .status(401)
+          .json({ message: "Password is incorrect", status:401 });
       }
 
       if (user_type !== user.user_type) {
-        return res.status(401).json({ message: "User type is incorrect" });
+        return res
+          .status(401)
+          .json({ message: "User type is incorrect", status: 401 });
       }
 
       const token = jwt.sign(
@@ -217,13 +230,16 @@ const authController = async (req, res) => {
           userName: user.name,
           phone: user.phone,
           DOB: user.DOB,
+          status:200
         },
         loginToken: token,
       });
     }
   } catch (error) {
     console.error("Error: ", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", status: 500 });
   }
 };
 
