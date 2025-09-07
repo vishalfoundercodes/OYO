@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const propertySchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  userType: { type: String },
+  residencyId: {
+    type: Number,
+    unique: true,
+  },
   name: { type: String, required: true }, // Hotel/PG/Apartment name
   type: { type: String, enum: ["hotel", "pg", "apartment"], required: true },
 
@@ -8,14 +14,14 @@ const propertySchema = new mongoose.Schema({
   address: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },
-  pincode: { type: String },
+  pincode: { type: String, required: true },
   coordinates: {
     lat: { type: Number },
     lng: { type: Number },
   },
 
   // Images
-  mainImage: { type: String }, // URL of main image
+  mainImage: { type: String, required: true }, // URL of main image
   images: [{ type: String }], // All images (gallery)
 
   // Pricing
@@ -26,6 +32,7 @@ const propertySchema = new mongoose.Schema({
   // Rooms / Units
   rooms: [
     {
+      roomId: { type: Number, required: true }, // ✅ unique per property
       roomType: {
         type: String,
         enum: [
@@ -45,9 +52,9 @@ const propertySchema = new mongoose.Schema({
         enum: ["furnished", "semi-furnished", "unfurnished"],
         default: "unfurnished",
       },
-      occupancy: { type: Number, default: 1 }, // how many people can stay
-      price: { type: Number }, // price per night/month for this room
-      amenities: [{ type: String }], // e.g., AC, TV, attached bathroom
+      occupancy: { type: Number, default: 1 },
+      price: { type: Number },
+      amenities: [{ type: String }],
       availableUnits: { type: Number, default: 0 },
       images: [{ type: String }],
     },
@@ -66,7 +73,7 @@ const propertySchema = new mongoose.Schema({
   rating: { type: Number, default: 0 }, // avg rating
   reviews: [
     {
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      userId: { type: String },
       comment: { type: String },
       rating: { type: Number },
       createdAt: { type: Date, default: Date.now },
@@ -78,7 +85,7 @@ const propertySchema = new mongoose.Schema({
   isAvailable: { type: Boolean, default: true },
 
   // Owner / Host
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  owner: { type: String },
 
   createdAt: { type: Date, default: Date.now },
 });

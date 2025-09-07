@@ -85,6 +85,7 @@ const express = require("express");
 const connectDB = require("./db/db.js");
 const signup = require("./router/authRouter.js");
 const property = require("./router/propertyRoute.js");
+const profile = require("./router/profileRouter.js");
 const cors = require("cors");
 
 const app = express();
@@ -125,6 +126,7 @@ connectDB;
 // ✅ Routes
 app.use("/api", signup);
 app.use("/data", property);
+app.use("/api", profile);
 
 // Test route
 app.post("/test", (req, res) => {

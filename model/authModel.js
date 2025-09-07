@@ -1,23 +1,44 @@
-// const mongoose = require('mongoose');
-// const signup=mongoose.Schema({
-//     name:{type:String,required:true},
-//     email:{type:String,required:true},
-//     password:{
-//         type:Number,
-//         required:true
-//     }
-// })
-// const signupModel = mongoose.model("Signup", signup);
-// module.exports = signupModel;
+// const mongoose=require('mongoose')
+// const signup = mongoose.Schema({
+//   userId: {
+//     type: Number,
+//     unique: true,
+//   },
+//   name: {
+//     type: String
+//   },
+//   email: {
+//     type: String,
+//     required: true,
+//   },
+//   password: {
+//     type: String,
+//     required: true,
+//   },
+//   user_type:{
+//     type:String
+//   },
+//   phone:{
+//     type:String,
+//     required:true
+//   },
+//   DOB:{
+//     type:String
+//   },
+//   currentToken: { type: String, default: null }
+// });
+// const signupModel= mongoose.model("Users",signup)
+// module.exports=signupModel
 
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
+
 const signup = mongoose.Schema({
   userId: {
     type: Number,
     unique: true,
   },
   name: {
-    type: String
+    type: String,
   },
   email: {
     type: String,
@@ -27,17 +48,40 @@ const signup = mongoose.Schema({
     type: String,
     required: true,
   },
-  user_type:{
-    type:String
+  user_type: {
+    type: String,
   },
-  phone:{
-    type:String,
-    required:true
+  phone: {
+    type: String,
+    required: true,
   },
-  DOB:{
-    type:String
+  DOB: {
+    type: String,
   },
-  currentToken: { type: String, default: null }
+  userImage: {
+    type: String, // store image URL or file path
+    default: null,
+  },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other"],
+    default: "Other",
+  },
+  maritalStatus: {
+    type: String,
+    enum: ["Single", "Married", "Divorced", "Widowed"],
+    default: "Single",
+  },
+  walletBalance: {
+    type: Number,
+    default: 0,
+  },
+  occupation: {
+    type: String,
+    default: null,
+  },
+  currentToken: { type: String, default: null },
 });
-const signupModel= mongoose.model("Users",signup)
-module.exports=signupModel
+
+const signupModel = mongoose.model("Users", signup);
+module.exports = signupModel;
