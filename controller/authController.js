@@ -174,6 +174,7 @@ const authController = async (req, res) => {
         { expiresIn: "1h" }
       );
 
+
       data.currentToken = token;
       await data.save();
 

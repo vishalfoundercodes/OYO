@@ -84,18 +84,6 @@ const updateProfile = async (req, res) => {
     return res.status(200).json({
       message: "Profile updated successfully",
       status: 200,
-      profile: {
-        userId: user.userId,
-        username: user.name,
-        email: user.email,
-        DOB: user.DOB,
-        contact: user.phone,
-        userImage: user.userImage,
-        gender: user.gender,
-        maritalStatus: user.maritalStatus,
-        walletBalance: user.walletBalance,
-        occupation: user.occupation,
-      },
     });
   } catch (error) {
     console.error("Error in updateProfile:", error);

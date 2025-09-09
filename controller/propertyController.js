@@ -396,47 +396,51 @@ const deleteProperty = async (req, res, next) => {
 // @desc Filter properties
 const filterProperties = async (req, res, next) => {
   try {
-    const { type, name, city, state, furnished, minPrice, maxPrice } = req.query;
+    let { type, name, city, state, furnished, minPrice, maxPrice } = req.query;
 
     let filter = {};
 
+    // Clean up query params (ignore "null", "undefined", or empty string)
+    const isValid = (val) =>
+      val !== undefined && val !== null && val !== "" && val !== "null" && val !== "undefined";
+
     // type filter
-    if (type) {
+    if (isValid(type)) {
       filter.type = type; // exact match hotel/pg/apartment
     }
 
     // name search (case-insensitive)
-    if (name) {
+    if (isValid(name)) {
       filter.name = { $regex: name, $options: "i" };
     }
 
     // city filter
-    if (city) {
+    if (isValid(city)) {
       filter.city = { $regex: city, $options: "i" };
     }
 
     // state filter
-    if (state) {
+    if (isValid(state)) {
       filter.state = { $regex: state, $options: "i" };
     }
 
     // furnished filter (check inside rooms array)
-    if (furnished) {
+    if (isValid(furnished)) {
       filter["rooms.furnished"] = furnished;
     }
 
     // price filter (both night and month basis)
-    if (minPrice || maxPrice) {
+    if (isValid(minPrice) || isValid(maxPrice)) {
       filter.$or = [];
 
       let priceFilterNight = {};
       let priceFilterMonth = {};
 
-      if (minPrice) {
+      if (isValid(minPrice)) {
         priceFilterNight.$gte = Number(minPrice);
         priceFilterMonth.$gte = Number(minPrice);
       }
-      if (maxPrice) {
+      if (isValid(maxPrice)) {
         priceFilterNight.$lte = Number(maxPrice);
         priceFilterMonth.$lte = Number(maxPrice);
       }
@@ -449,11 +453,11 @@ const filterProperties = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
+      status: 200,
       count: properties.length,
       data: properties,
     });
   } catch (error) {
-    // console.error("Error filtering properties:", error);
     next(error);
   }
 };

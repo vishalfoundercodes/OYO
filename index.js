@@ -125,7 +125,7 @@ connectDB;
 
 // ✅ Routes
 app.use("/api", signup);
-app.use("/data", property);
+app.use("/api", property);
 app.use("/api", profile);
 
 // Test route
