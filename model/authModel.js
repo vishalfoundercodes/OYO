@@ -83,5 +83,6 @@ const signup = mongoose.Schema({
   currentToken: { type: String, default: null },
 });
 
+
 const signupModel = mongoose.model("Users", signup);
 module.exports = signupModel;

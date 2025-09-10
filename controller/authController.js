@@ -124,7 +124,7 @@ const authController = async (req, res) => {
   try {
     const { action, name, email, password, user_type, phone, DOB } = req.body;
 
-    if (!action || !["signup", "login"].includes(action)) {
+    if (!action || !["signup", "login", "guest"].includes(action)) {
       return res.status(400).json({ message: "Invalid action" });
     }
 
@@ -236,6 +236,30 @@ const authController = async (req, res) => {
         status: 200,
       });
     }
+
+    if (action === "guest") {
+      const randomSuffix = crypto.randomBytes(3).toString("hex");
+      const guestName = `guest_${randomSuffix}`;
+
+      const token = jwt.sign(
+        { userId: `guest_${randomSuffix}`, user_type: "3" },
+        jwtSecret,
+        { expiresIn: "1h" }
+      );
+
+      return res.status(200).json({
+        message: "Guest login successful",
+        user: {
+          userId: `guest_${randomSuffix}`,
+          email: null,
+          user_type: "3",
+          userName: guestName,
+        },
+        loginToken: token,
+        status: 200,
+      });
+    }
+
   } catch (error) {
     console.error("Error: ", error);
     return res
@@ -244,7 +268,58 @@ const authController = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const { userId,  oldPassword, newPassword } = req.body;
+
+    if (!userId  || !oldPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "userId, oldPassword, and newPassword are required",
+        status: 400,
+      });
+    }
+
+    // Find user by userId + email
+    const user = await Signup.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    // Check old password
+    if (user.password !== oldPassword) {
+      return res.status(401).json({
+        success: false,
+        message: "Old password is incorrect",
+        status: 401,
+      });
+    }
+
+    // Update with new password
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+      status: 200,
+    });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      status: 500,
+    });
+  }
+};
+
 // module.exports = { authController };
 
 
-module.exports = { addNewSignup, getLogin, authController };
+module.exports = { addNewSignup, getLogin, authController,changePassword };

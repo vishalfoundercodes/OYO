@@ -1,130 +1,145 @@
 // controllers/propertyController.js
 const Property = require("../model/propertyModel");
+const Wishlist = require("../model/wishlistModel"); 
+const EnumModel = require("../model/EnumModel"); // ✅ path sahi apne project ke hisaab se lagana
+
+// Helper function for enum validation
+async function validateEnum(category, value) {
+  const enumDoc = await EnumModel.findOne({ category });
+  if (!enumDoc) return false;
+
+  return enumDoc.options.some((opt) => opt.value === value);
+}
+
 
 // @desc Add new property
 // const addProperty = async (req, res, next) => {
-//   try {
-//     // Debug logs
-//     // console.log("Request headers:", req.headers);
-//     // console.log("Request body:", req.body);
-//     // console.log("Body type:", typeof req.body);
-//     // console.log("Body keys:", Object.keys(req.body || {}));
+  // try {
+  //   // Check if body exists
+  //   if (!req.body || Object.keys(req.body).length === 0) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       message: "Request body is empty or not properly parsed",
+  //       debug: {
+  //         contentType: req.headers["content-type"],
+  //         bodyExists: !!req.body,
+  //         bodyType: typeof req.body,
+  //       },
+  //     });
+  //   }
 
-//     // Check if body exists
-//     if (!req.body || Object.keys(req.body).length === 0) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Request body is empty or not properly parsed",
-//         debug: {
-//           contentType: req.headers["content-type"],
-//           bodyExists: !!req.body,
-//           bodyType: typeof req.body,
-//         },
-//       });
-//     }
+  //   // Destructure all expected fields from the body
+  //   const {
+  //     userId,
+  //     userType,
+  //     name,
+  //     type,
+  //     address,
+  //     city,
+  //     state,
+  //     pincode,
+  //     coordinates,
+  //     mainImage,
+  //     images,
+  //     pricePerNight,
+  //     pricePerMonth,
+  //     depositAmount,
+  //     rooms = [], // ✅ default empty array
+  //     amenities,
+  //     rules,
+  //     contactNumber,
+  //     email,
+  //     website,
+  //     rating,
+  //     reviews,
+  //     availableRooms,
+  //     owner,
+  //     description,
+  //     isAvailable,
+  //   } = req.body;
 
-//     // Destructure all expected fields from the body
-//     const {
-//       userId,
-//       userType,
-//       name,
-//       type,
-//       address,
-//       city,
-//       state,
-//       pincode,
-//       coordinates,
-//       mainImage,
-//       images,
-//       pricePerNight,
-//       pricePerMonth,
-//       depositAmount,
-//       rooms,
-//       amenities,
-//       rules,
-//       contactNumber,
-//       email,
-//       website,
-//       rating,
-//       reviews,
-//       availableRooms,
-//       isAvailable,
-//     } = req.body;
+  //   // Validate required fields
+  //   if (!name || !type || !address || !city || !state) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       message: "Missing required fields",
+  //       required: ["name", "type", "address", "city", "state"],
+  //       received: {
+  //         name: !!name,
+  //         type: !!type,
+  //         address: !!address,
+  //         city: !!city,
+  //         state: !!state,
+  //       },
+  //     });
+  //   }
 
-//     // Validate required fields
-//     if (!name || !type || !address || !city || !state) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Missing required fields",
-//         required: ["name", "type", "address", "city", "state"],
-//         received: {
-//           name: !!name,
-//           type: !!type,
-//           address: !!address,
-//           city: !!city,
-//           state: !!state,
-//         },
-//       });
-//     }
-//   const lastresidencyId = await Property.findOne({})
-//     .sort({ residencyId: -1 })
-//     .lean();
-//   const nextresidencyId =
-//     lastresidencyId && lastresidencyId.residencyId
-//       ? lastresidencyId.residencyId + 1
-//       : 1;
+  //   // Generate residencyId
+  //   const lastresidencyId = await Property.findOne({})
+  //     .sort({ residencyId: -1 })
+  //     .lean();
+  //   const nextresidencyId =
+  //     lastresidencyId && lastresidencyId.residencyId
+  //       ? lastresidencyId.residencyId + 1
+  //       : 1;
 
-//     // Build the property object explicitly
-//     const propertyData = {
-//       userId,
-//       userType,
-//       residencyId:nextresidencyId,
-//       name,
-//       type,
-//       address,
-//       city,
-//       state,
-//       pincode,
-//       coordinates,
-//       mainImage,
-//       images,
-//       pricePerNight,
-//       pricePerMonth,
-//       depositAmount,
-//       rooms,
-//       amenities,
-//       rules,
-//       contactNumber,
-//       email,
-//       website,
-//       rating,
-//       reviews,
-//       availableRooms,
-//       isAvailable,
-//     };
+  //   // ✅ Generate roomId automatically (per property starting from 1)
+  //   let roomCounter = 1;
+  //   const roomsWithId = rooms.map((room) => {
+  //     return { ...room, roomId: roomCounter++ };
+  //   });
 
-//     // Attach owner if logged-in user is available
-//     if (req.user) {
-//       propertyData.owner = req.user._id;
-//     }
+  //   // Build the property object explicitly
+  //   const propertyData = {
+  //     userId,
+  //     userType,
+  //     residencyId: nextresidencyId,
+  //     name,
+  //     type,
+  //     address,
+  //     city,
+  //     state,
+  //     pincode,
+  //     coordinates,
+  //     mainImage,
+  //     images,
+  //     pricePerNight,
+  //     pricePerMonth,
+  //     depositAmount,
+  //     rooms: roomsWithId, // ✅ auto roomId applied
+  //     amenities,
+  //     rules,
+  //     contactNumber,
+  //     email,
+  //     website,
+  //     rating,
+  //     reviews,
+  //     availableRooms,
+  //     owner,
+  //     description,
+  //     isAvailable,
+  //   };
 
-   
-//     // console.log("Property data to save:", propertyData);
+  //   // Attach owner if logged-in user is available
+  //   if (req.user) {
+  //     propertyData.owner = req.user._id;
+  //   }
 
-//     const newProperty = new Property(propertyData);
-//     const savedProperty = await newProperty.save();
+  //   const newProperty = new Property(propertyData);
+  //   const savedProperty = await newProperty.save();
 
-//     res.status(201).json({
-//       success: true,
-//       message: "Property added successfully",
-//       // data: savedProperty,
-//       status:200
-//     });
-//   } catch (err) {
-//     console.error("Error adding property:", err);
-//     next(err); // pass error to global error handler
-//   }
+  //   res.status(201).json({
+  //     success: true,
+  //     message: "Property added successfully",
+  //     status: 200,
+  //   });
+  // } catch (err) {
+  //   // console.error("Error adding property:", err);
+  //   next(err); // pass error to global error handler
+  // }
 // };
+
+// @desc Get all properties
 const addProperty = async (req, res, next) => {
   try {
     // Check if body exists
@@ -165,6 +180,8 @@ const addProperty = async (req, res, next) => {
       rating,
       reviews,
       availableRooms,
+      owner,
+      description,
       isAvailable,
     } = req.body;
 
@@ -182,6 +199,36 @@ const addProperty = async (req, res, next) => {
           state: !!state,
         },
       });
+    }
+
+    // ✅ Property Type validate
+    const validType = await validateEnum("propertyType", type);
+    if (!validType) {
+      return res.status(400).json({ message: "Invalid property type" });
+    }
+
+    // ✅ Rooms validate
+    for (let room of rooms) {
+      if (room.roomType) {
+        const validRoomType = await validateEnum("roomType", room.roomType);
+        if (!validRoomType) {
+          return res
+            .status(400)
+            .json({ message: `Invalid room type: ${room.roomType}` });
+        }
+      }
+
+      if (room.furnished) {
+        const validFurnished = await validateEnum(
+          "furnishedType",
+          room.furnished
+        );
+        if (!validFurnished) {
+          return res
+            .status(400)
+            .json({ message: `Invalid furnished type: ${room.furnished}` });
+        }
+      }
     }
 
     // Generate residencyId
@@ -225,6 +272,8 @@ const addProperty = async (req, res, next) => {
       rating,
       reviews,
       availableRooms,
+      owner,
+      description,
       isAvailable,
     };
 
@@ -239,33 +288,51 @@ const addProperty = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Property added successfully",
-      status: 200,
+      status: 200
     });
   } catch (err) {
-    // console.error("Error adding property:", err);
+    console.error("Error adding property:", err);
     next(err); // pass error to global error handler
   }
 };
-
-
 // @desc Get all properties
 const getAllProperties = async (req, res, next) => {
   try {
-  const properties = await Property.find().populate({
-    path: "owner",
-    match: { type: 1 }, // only vendor owners
-    select: "name email userId type",
-  });
-// fetch reviewer info
+    const { userId } = req.query; // frontend se ?userId=2 bhejna login hone par
+
+    // sabhi properties fetch karo
+    const properties = await Property.find()
+      .populate({
+        path: "owner",
+        match: { type: 1 }, // only vendor owners
+        select: "name email userId type",
+      })
+      .lean();
+
+    let wishlistIds = [];
+    if (userId) {
+      // us user ki wishlist fetch karo
+      const wishlist = await Wishlist.find({ userId }).lean();
+      wishlistIds = wishlist.map((w) => w.residencyId);
+    }
+
+    // properties ke andar wishlist status inject karo
+    const modified = properties.map((p) => ({
+      ...p,
+      wishlist: userId ? wishlistIds.includes(p.residencyId) : false,
+    }));
+
+    // wishlist count
+    const wishlistCount = userId ? wishlistIds.length : 0;
 
     res.status(200).json({
       success: true,
-      count: properties.length,
-      data: properties,
+      count: modified.length,
+      wishlistCount,
+      data: modified,
     });
   } catch (error) {
-    // console.error("Error fetching properties:", error);
-    next(error); // ✅
+    next(error);
   }
 };
 
@@ -462,6 +529,67 @@ const filterProperties = async (req, res, next) => {
   }
 };
 
+// @desc Add review to a property (with optional roomId)
+const addReview = async (req, res, next) => {
+  try {
+    const { userId, comment, rating, roomId, residencyId } = req.body;
+
+    // Validate
+    if (!userId || !comment || !rating) {
+      return res.status(400).json({
+        success: false,
+        message: "userId, comment, and rating are required",
+      });
+    }
+
+    // Find property
+    const property = await Property.findOne({ residencyId });
+    if (!property) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
+    }
+
+    // ✅ Check if user already reviewed this property (same residencyId + roomId)
+    const alreadyReviewed = property.reviews.find(
+      (r) =>
+        r.userId === userId &&
+        (roomId ? r.roomId === roomId : true) // if roomId given, check with it
+    );
+
+    if (alreadyReviewed) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already reviewed this property/room",
+      });
+    }
+
+    // Push review
+    property.reviews.push({
+      userId,
+      roomId: roomId || null, // optional
+      comment,
+      rating,
+    });
+
+    // ✅ Update average rating
+    const avgRating =
+      property.reviews.reduce((sum, r) => sum + r.rating, 0) /
+      property.reviews.length;
+    property.rating = avgRating.toFixed(1);
+
+    await property.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Review added successfully",
+      status: 200,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 module.exports = {
   addProperty,
@@ -470,4 +598,5 @@ module.exports = {
   updateRoomInProperty,
   deleteProperty,
   filterProperties,
+  addReview,
 };
