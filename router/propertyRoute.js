@@ -14,8 +14,8 @@ const {
 // routes
 router.post("/addproperty", addProperty);
 router.post("/getproperty", getAllProperties);
-
-router.delete("/deleteproperty/:id", deleteProperty);
+// admin.roombookkro.com/api/getproperty?userId=null
+https: router.delete("/deleteproperty/:id", deleteProperty);
 router.get("/filterproperty", filterProperties);
 // GET /api/filterproperty?type=pg&city=Lucknow&furnished=semi-furnished&minPrice=2000&maxPrice=6000
 // Add multiple rooms

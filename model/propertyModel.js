@@ -165,7 +165,7 @@ const propertySchema = new mongoose.Schema({
   availableRooms: { type: Number, default: 0 },
   isAvailable: { type: Boolean, default: true },
   owner: { type: String },
-
+  role:{type:String},
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -40,5 +40,6 @@ route.post("/policy", auth, async (req, res, next) => {
 
 // Public ke liye
 route.get("/policy", getPolicyJson);
+route.get("/policy/:key", getPolicyJson);
 
 module.exports = route;

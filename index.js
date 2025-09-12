@@ -10,6 +10,7 @@ const order = require("./router/orderRoute.js");
 const wishlist = require("./router/wishlistRouter.js");
 const enumList = require("./router/enumRouter.js");
 const policyRouter = require("./router/policyRouter.js");
+const onboardPage=require("./router/onBoardPageRoute.js")
 const cors = require("cors");
 const banner = require("./router/bannerRouter.js");
 
@@ -52,7 +53,16 @@ app.use((req, res, next) => {
 connectDB;
 
 // ✅ Routes
-app.use("/api", signup, banner, order, wishlist, enumList, policyRouter);
+app.use(
+  "/api",
+  signup,
+  banner,
+  order,
+  wishlist,
+  enumList,
+  policyRouter,
+  onboardPage
+);
 app.use("/api", property);
 app.use("/api", profile);
 

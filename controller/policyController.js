@@ -69,21 +69,41 @@ const addOrUpdatePolicy = async (req, res, next) => {
 
 const getPolicyJson = async (req, res, next) => {
   try {
-    // access by query (?key=privacy) or param (/policy/privacy)
-    const key = req.query.key || req.params.key;
-    if (!key) {
-      // return all policies if no key (list)
+    let key = req.query.key || req.params.key;
+
+    if (key === undefined || key === null || key === "null" || key === "") {
+      // agar key null ya empty ho to sari policies bhej do
       const all = await Policy.find({}).select("-__v");
       return res.status(200).json(all);
     }
+
+    // number mapping
+    const map = {
+      0: "help-center",
+      1: "privacy",
+      2: "return",
+      3: "terms",
+    };
+
+    // agar key number me mila to usko string key me convert karo
+    if (map[key] !== undefined) {
+      key = map[key];
+    }
+
     const p = await Policy.findOne({ key }).select("-__v");
     if (!p)
       return res.status(404).json({ success: false, message: "Not found" });
-    return res.status(200).json(p);
+
+return res.status(200).json({
+  success: true,
+  status: 200,
+  data: p,
+});
   } catch (err) {
     next(err);
   }
 };
+
 
 // Optional: return raw HTML with content-type text/html — useful for iframe or direct HTML viewer
 const getPolicyHtml = async (req, res, next) => {

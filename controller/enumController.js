@@ -72,33 +72,64 @@ const removeOption = async (req, res) => {
 
 
 // controller/enumController.js
+// controller/enumController.js
 const getOptions = async (req, res) => {
   try {
-    // query params uthao
     const queryKeys = Object.keys(req.query);
 
-    // agar ?null aaya hai ya koi query nahi di -> return all enums
+    // ✅ Case 1: Agar koi query nahi di -> return all enums in required format
     if (
       queryKeys.length === 0 ||
       (queryKeys.length === 1 && queryKeys[0] === "null")
     ) {
       const allEnums = await EnumModel.find({});
-      return res.status(200).json(allEnums);
+      let formattedData = {};
+
+      allEnums.forEach((doc) => {
+        formattedData[doc.category] = {
+          type: doc.category,
+          options: doc.options,
+        };
+      });
+
+      return res.status(200).json({
+        status: true,
+        msg: "fetched",
+        data: formattedData,
+      });
     }
 
-    // warna pehle query param ka naam hi category hai
+    // ✅ Case 2: Agar specific category query param diya hai
     const category = queryKeys[0];
     const enumDoc = await EnumModel.findOne({ category });
 
     if (!enumDoc) {
-      return res.status(404).json({ message: "Category not found" });
+      return res.status(404).json({
+        status: false,
+        msg: "Category not found",
+        data: {},
+      });
     }
 
-    return res.status(200).json(enumDoc.options);
+    return res.status(200).json({
+      status: 200,
+      msg: "Data fetched",
+      data: {
+        [category]: {
+          type: category,
+          options: enumDoc.options,
+        },
+      },
+    });
   } catch (error) {
     console.error("Error fetching options:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({
+      status: false,
+      msg: "Internal Server Error",
+      data: {},
+    });
   }
 };
+
 
 module.exports = { addOption, removeOption, getOptions };

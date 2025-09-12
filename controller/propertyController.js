@@ -181,6 +181,7 @@ const addProperty = async (req, res, next) => {
       reviews,
       availableRooms,
       owner,
+      role,
       description,
       isAvailable,
     } = req.body;
@@ -202,7 +203,7 @@ const addProperty = async (req, res, next) => {
     }
 
     // ✅ Property Type validate
-    const validType = await validateEnum("propertyType", type);
+    const validType = await validateEnum("Category", type);
     if (!validType) {
       return res.status(400).json({ message: "Invalid property type" });
     }
@@ -210,7 +211,7 @@ const addProperty = async (req, res, next) => {
     // ✅ Rooms validate
     for (let room of rooms) {
       if (room.roomType) {
-        const validRoomType = await validateEnum("roomType", room.roomType);
+        const validRoomType = await validateEnum("Room Type", room.roomType);
         if (!validRoomType) {
           return res
             .status(400)
@@ -219,10 +220,7 @@ const addProperty = async (req, res, next) => {
       }
 
       if (room.furnished) {
-        const validFurnished = await validateEnum(
-          "furnishedType",
-          room.furnished
-        );
+        const validFurnished = await validateEnum("Furnished", room.furnished);
         if (!validFurnished) {
           return res
             .status(400)
@@ -273,6 +271,7 @@ const addProperty = async (req, res, next) => {
       reviews,
       availableRooms,
       owner,
+      role,
       description,
       isAvailable,
     };

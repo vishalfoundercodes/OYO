@@ -195,22 +195,22 @@ const authController = async (req, res) => {
 
     if (action === "login") {
       // ---- LOGIN LOGIC ----
-      const user = await Signup.findOne({ email });
+      const user = await Signup.findOne({ phone });
       if (!user)
         return res
           .status(404)
           .json({ message: "User does not exist", status: 401 });
 
-      if (password !== user.password) {
-        return res
-          .status(401)
-          .json({ message: "Password is incorrect", status:401 });
-      }
+      // if (password !== user.password) {
+      //   return res
+      //     .status(401)
+      //     .json({ message: "Password is incorrect", status:401 });
+      // }
 
-      if (user_type !== user.user_type) {
+      if (Number(user_type) !== Number(user.user_type)) {
         return res
           .status(401)
-          .json({ message: "User type is incorrect", status: 401 });
+          .json({ message: "User type is incorrect", status: 401, userType:user.user_type, enterType:user_type });
       }
 
       const token = jwt.sign(
