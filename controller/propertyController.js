@@ -2,6 +2,7 @@
 const Property = require("../model/propertyModel");
 const Wishlist = require("../model/wishlistModel"); 
 const EnumModel = require("../model/EnumModel"); // ✅ path sahi apne project ke hisaab se lagana
+const Signup = require("../model/authModel.js")
 
 // Helper function for enum validation
 async function validateEnum(category, value) {
@@ -549,6 +550,13 @@ const addReview = async (req, res, next) => {
         .json({ success: false, message: "Property not found" });
     }
 
+    // Find user
+      const user = await Signup.findOne({ userId });
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+      }
     // ✅ Check if user already reviewed this property (same residencyId + roomId)
     const alreadyReviewed = property.reviews.find(
       (r) =>
@@ -566,6 +574,8 @@ const addReview = async (req, res, next) => {
     // Push review
     property.reviews.push({
       userId,
+      userName: user.name, 
+      userImage: user.userImage,
       roomId: roomId || null, // optional
       comment,
       rating,

@@ -154,6 +154,8 @@ const propertySchema = new mongoose.Schema({
   reviews: [
     {
       userId: { type: String, required: true },
+      userName: { type: String }, 
+      userImage: { type: String },
       roomId: { type: Number },
       comment: { type: String, required: true },
       rating: { type: Number, min: 1, max: 5, required: true },
@@ -165,7 +167,7 @@ const propertySchema = new mongoose.Schema({
   availableRooms: { type: Number, default: 0 },
   isAvailable: { type: Boolean, default: true },
   owner: { type: String },
-  role:{type:String},
+  role: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 

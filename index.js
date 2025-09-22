@@ -11,8 +11,10 @@ const wishlist = require("./router/wishlistRouter.js");
 const enumList = require("./router/enumRouter.js");
 const policyRouter = require("./router/policyRouter.js");
 const onboardPage=require("./router/onBoardPageRoute.js")
+const cupponCode=require("./router/cupponRouter.js")
 const cors = require("cors");
 const banner = require("./router/bannerRouter.js");
+const payment = require("./router/paymentsRouter.js");
 
 const app = express();
 app.use(express.json()); // to parse application/json
@@ -61,7 +63,9 @@ app.use(
   wishlist,
   enumList,
   policyRouter,
-  onboardPage
+  onboardPage,
+  cupponCode,
+  payment
 );
 app.use("/api", property);
 app.use("/api", profile);
