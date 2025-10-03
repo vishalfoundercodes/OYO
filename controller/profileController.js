@@ -9,9 +9,9 @@ const getProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found", status: 404 });
     }
 
-    if (user.user_type !== "2") {
-      return res.status(403).json({ message: "Access denied", status: 403 });
-    }
+    // if (user.user_type !== "2") {
+    //   return res.status(403).json({ message: "Access denied", status: 403 });
+    // }
 
     return res.status(200).json({
       message: "Profile fetched successfully",
@@ -27,6 +27,7 @@ const getProfile = async (req, res) => {
         maritalStatus: user.maritalStatus,
         walletBalance: user.walletBalance,
         occupation: user.occupation,
+        userStatus: user.userStatus,
       },
     });
   } catch (error) {
@@ -47,9 +48,9 @@ const updateProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found", status: 404 });
     }
 
-    if (user.user_type !== "2") {
-      return res.status(403).json({ message: "Access denied", status: 403 });
-    }
+    // if (user.user_type !== "2") {
+    //   return res.status(403).json({ message: "Access denied", status: 403 });
+    // }
 
     // ✅ Allowed fields for update (including email)
     const allowedFields = [
@@ -62,6 +63,7 @@ const updateProfile = async (req, res) => {
       "maritalStatus",
       "occupation",
       "walletBalance",
+      "userStatus",
     ];
 
     let isUpdated = false;

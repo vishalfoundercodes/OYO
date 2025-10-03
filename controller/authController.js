@@ -165,6 +165,7 @@ const authController = async (req, res) => {
         user_type,
         phone,
         DOB,
+        userStatus: 1,
       });
 
       const data = await signup.save();
@@ -187,6 +188,7 @@ const authController = async (req, res) => {
           userName: data.name,
           phone: data.phone,
           DOB: data.DOB,
+          userStatus: data.userStatus,
         },
         loginToken: token,
         status: 200,
@@ -207,10 +209,23 @@ const authController = async (req, res) => {
       //     .json({ message: "Password is incorrect", status:401 });
       // }
 
+      // check userStatus
+      if (user.userStatus === 0) {
+        return res.status(403).json({
+          message: "User is blocked by admin",
+          status: 403,
+        });
+      }
+
       if (Number(user_type) !== Number(user.user_type)) {
         return res
           .status(401)
-          .json({ message: "User type is incorrect", status: 401, userType:user.user_type, enterType:user_type });
+          .json({
+            message: "User type is incorrect",
+            status: 401,
+            userType: user.user_type,
+            enterType: user_type,
+          });
       }
 
       const token = jwt.sign(
@@ -231,6 +246,7 @@ const authController = async (req, res) => {
           userName: user.name,
           phone: user.phone,
           DOB: user.DOB,
+          userStatus: user.userStatus,
         },
         loginToken: token,
         status: 200,
@@ -254,6 +270,7 @@ const authController = async (req, res) => {
           email: null,
           user_type: "3",
           userName: guestName,
+          userStatus: 1,
         },
         loginToken: token,
         status: 200,
@@ -319,7 +336,38 @@ const changePassword = async (req, res) => {
   }
 };
 
+// const getAllUsers=async(req,res)=>{
+//   try {
+//     const res = await Signup.find()
+//     return res.status(200).json({message:"fetched data",res})
+//   } catch (error) {
+//     console.error(error)
+//   }
+// }
+const getAllUsers = async (req, res) => {
+  try {
+   const users = await Signup.find().sort({ _id: -1 });
+    return res.status(200).json({
+      message: "Fetched data",
+      users,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error fetching users",
+      error: error.message,
+    });
+  }
+};
+
+
 // module.exports = { authController };
 
 
-module.exports = { addNewSignup, getLogin, authController,changePassword };
+module.exports = {
+  addNewSignup,
+  getLogin,
+  authController,
+  changePassword,
+  getAllUsers,
+};

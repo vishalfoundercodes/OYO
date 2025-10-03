@@ -14,6 +14,7 @@ const createCoupon = async (req, res) => {
       createdByType, // 0 = superadmin, 1 = admin
       expiryInMinutes,
       maxUses,
+      description,
     } = req.body;
 
     // Required fields common
@@ -23,6 +24,7 @@ const createCoupon = async (req, res) => {
       value,
       createdBy,
       createdByType,
+      description,
     };
     let missingFields = Object.keys(requiredFields).filter(
       (key) => requiredFields[key] === undefined || requiredFields[key] === ""
@@ -62,6 +64,7 @@ const createCoupon = async (req, res) => {
 
     const couponData = {
       code,
+      description,
       couponType,
       type,
       value,

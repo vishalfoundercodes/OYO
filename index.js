@@ -15,6 +15,8 @@ const cupponCode=require("./router/cupponRouter.js")
 const cors = require("cors");
 const banner = require("./router/bannerRouter.js");
 const payment = require("./router/paymentsRouter.js");
+const notification =require("./router/notificationRouter.js")
+const paymentRoutes=require("./router/paymentsRouter.js")
 
 const app = express();
 app.use(express.json()); // to parse application/json
@@ -65,11 +67,12 @@ app.use(
   policyRouter,
   onboardPage,
   cupponCode,
-  payment
+  payment,
+  notification
 );
 app.use("/api", property);
 app.use("/api", profile);
-
+app.use("/api/payment", paymentRoutes);
 // Test route
 app.post("/test", (req, res) => {
   console.log("Headers:", req.headers);

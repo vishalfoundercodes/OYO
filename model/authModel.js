@@ -32,55 +32,59 @@
 
 const mongoose = require("mongoose");
 
-const signup = mongoose.Schema({
-  userId: {
-    type: Number,
-    unique: true,
+const signup = mongoose.Schema(
+  {
+    userId: {
+      type: Number,
+      unique: true,
+    },
+    name: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    user_type: {
+      type: String,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    DOB: {
+      type: String,
+    },
+    userImage: {
+      type: String, // store image URL or file path
+      default: null,
+    },
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      default: "Other",
+    },
+    maritalStatus: {
+      type: String,
+      enum: ["Single", "Married", "Divorced", "Widowed"],
+      default: "Single",
+    },
+    walletBalance: {
+      type: Number,
+      default: 0,
+    },
+    occupation: {
+      type: String,
+      default: null,
+    },
+    currentToken: { type: String, default: null },
+    userStatus: { type: Number, default: 1 },
   },
-  name: {
-    type: String,
-  },
-  email: {
-    type: String,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  user_type: {
-    type: String,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  DOB: {
-    type: String,
-  },
-  userImage: {
-    type: String, // store image URL or file path
-    default: null,
-  },
-  gender: {
-    type: String,
-    enum: ["Male", "Female", "Other"],
-    default: "Other",
-  },
-  maritalStatus: {
-    type: String,
-    enum: ["Single", "Married", "Divorced", "Widowed"],
-    default: "Single",
-  },
-  walletBalance: {
-    type: Number,
-    default: 0,
-  },
-  occupation: {
-    type: String,
-    default: null,
-  },
-  currentToken: { type: String, default: null },
-});
+  { timestamps: true }
+);
 
 
 const signupModel = mongoose.model("Users", signup);
